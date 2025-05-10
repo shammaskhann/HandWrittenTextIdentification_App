@@ -343,7 +343,13 @@
 // - Improved the drawing experience with smoother lines and better performance.
 // - Added a toolbar for easy access to drawing tools.
 // - Added a clear button to reset the drawing.
+import 'dart:developer';
 import 'dart:ui';
+import 'package:ds_ai_project_ui/screen/info/info_screen.dart';
+import 'package:ds_ai_project_ui/screen/onboarding/onboarding_screen.dart';
+import 'package:ds_ai_project_ui/screen/scripts/scripts_screen.dart';
+import 'package:ds_ai_project_ui/services/api_service.dart';
+import 'package:ds_ai_project_ui/utils/api_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:typed_data';
@@ -360,25 +366,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Whiteboard',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(
-        primaryColor: Colors.blue,
-        scaffoldBackgroundColor: Colors.grey[100],
-        appBarTheme: const AppBarTheme(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-        ),
-      ),
-      darkTheme: ThemeData.dark().copyWith(
+      theme: ThemeData(
         appBarTheme: const AppBarTheme(
           elevation: 0,
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
         ),
+        fontFamily: 'Manrope',
         scaffoldBackgroundColor: Colors.grey[900],
       ),
-      themeMode: ThemeMode.system,
-      home: const DrawingBoard(),
+      themeMode: ThemeMode.dark,
+      home: const ScriptsScreen(),
+      //home: const DrawingBoard(),
     );
   }
 }
@@ -408,6 +407,11 @@ class _DrawingBoardState extends State<DrawingBoard> {
   ];
   final GlobalKey _whiteboardKey = GlobalKey();
   bool _isDarkMode = false;
+
+  final ApiService _apiService = ApiService();
+  String? _recognitionResult;
+  String? _modelUsed;
+  bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -504,6 +508,40 @@ class _DrawingBoardState extends State<DrawingBoard> {
     });
   }
 
+  Future<void> _recognizeText() async {
+    final imageBytes = await _captureWhiteboard();
+    if (imageBytes == null) return;
+    log('Image captured: ${imageBytes.length} bytes');
+    setState(() {
+      _isProcessing = true;
+      _recognitionResult = null;
+      _modelUsed = null;
+    });
+
+    try {
+      // You can make this selectable between 'cnn' and 'ml' as in the HTML example
+      const modelType = 'cnn';
+
+      final result = await _apiService.recognizeHandwriting(
+        imageBytes: imageBytes,
+        modelType: modelType,
+      );
+      log('Recognition Result: ${result.prediction}');
+      log('Model Used: ${result.modelUsed}');
+      setState(() {
+        _recognitionResult = result.prediction;
+        _modelUsed = result.modelUsed;
+      });
+    } on ApiException catch (e) {
+      log('API Error: ${e.message}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } finally {
+      setState(() => _isProcessing = false);
+    }
+  }
+
   Future<Uint8List?> _captureWhiteboard() async {
     try {
       RenderRepaintBoundary boundary = _whiteboardKey.currentContext!
@@ -522,11 +560,11 @@ class _DrawingBoardState extends State<DrawingBoard> {
     }
   }
 
-  Future<void> _identifyText() async {
-    final imageBytes = await _captureWhiteboard();
-    if (imageBytes == null) return;
-    _showImageInfoDialog(imageBytes.length);
-  }
+  // Future<void> _identifyText() async {
+  //   final imageBytes = await _captureWhiteboard();
+  //   if (imageBytes == null) return;
+  //   _showImageInfoDialog(imageBytes.length);
+  // }
 
   void _showImageInfoDialog(int byteLength) {
     showDialog(
@@ -632,16 +670,67 @@ class _DrawingBoardState extends State<DrawingBoard> {
               ),
             ],
           ),
+          // Add recognition results display
+          if (_recognitionResult != null)
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(top: 8),
+              decoration: BoxDecoration(
+                color: _isDarkMode ? Colors.grey[800] : Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Recognition Result:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: _isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _recognitionResult!,
+                    style: TextStyle(
+                      color: _isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  if (_modelUsed != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Model used: ${_modelUsed!.toUpperCase()}',
+                        style: TextStyle(
+                          color:
+                              _isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
         ],
       ),
     );
   }
 
+// Update your _buildIdentifyTextButton to show loading state:
   Widget _buildIdentifyTextButton() {
     return ElevatedButton.icon(
-      onPressed: _identifyText,
-      icon: const Icon(Icons.text_fields, size: 20),
-      label: const Text("Identify Text"),
+      onPressed: _isProcessing ? null : _recognizeText,
+      icon: _isProcessing
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+              ),
+            )
+          : const Icon(Icons.text_fields, size: 20),
+      label: Text(_isProcessing ? 'Processing...' : "Identify Text"),
       style: ElevatedButton.styleFrom(
         backgroundColor: _isDarkMode ? Colors.blue[800] : Colors.blue[50],
         foregroundColor: _isDarkMode ? Colors.white : Colors.blue,
