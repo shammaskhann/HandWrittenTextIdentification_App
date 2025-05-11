@@ -6,6 +6,7 @@ class CustomActionButton extends StatefulWidget {
   final VoidCallback onTap;
   final Color? backgroundColor;
   final Color? textColor;
+  final bool iconAtEnd;
 
   const CustomActionButton({
     Key? key,
@@ -14,6 +15,7 @@ class CustomActionButton extends StatefulWidget {
     required this.onTap,
     this.backgroundColor,
     this.textColor,
+    this.iconAtEnd = false,
   }) : super(key: key);
 
   @override
@@ -53,17 +55,30 @@ class _CustomActionButtonState extends State<CustomActionButton> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                widget.icon,
-                color: widget.textColor ?? defaultTextColor,
-              ),
-              const SizedBox(width: 8),
+              (!widget.iconAtEnd)
+                  ? Icon(
+                      widget.icon,
+                      color: widget.textColor ?? defaultTextColor,
+                    )
+                  : const SizedBox(),
+              (!widget.iconAtEnd)
+                  ? const SizedBox(width: 8)
+                  : const SizedBox.shrink(),
               Text(
                 widget.label,
                 style: TextStyle(
                   color: widget.textColor ?? defaultTextColor,
                 ),
               ),
+              (widget.iconAtEnd)
+                  ? const SizedBox(width: 8)
+                  : const SizedBox.shrink(),
+              (widget.iconAtEnd)
+                  ? Icon(
+                      widget.icon,
+                      color: widget.textColor ?? defaultTextColor,
+                    )
+                  : const SizedBox(),
             ],
           ),
         ),

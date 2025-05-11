@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class ModelCard extends StatefulWidget {
@@ -37,8 +39,9 @@ class _ModelCardState extends State<ModelCard> {
         ? MediaQuery.of(context).size.width - 32
         : widget.isTablet
             ? (widget.isWide ? MediaQuery.of(context).size.width - 64 : 300)
-            : MediaQuery.of(context).size.width / 3 - 100;
-
+            // : MediaQuery.of(context).size.width / 3 - 100;
+            : 460.clamp(300, 460).toDouble();
+    log("Card Width: $cardWidth");
     return MouseRegion(
       onEnter: (_) => widget.onHover(true),
       onExit: (_) => widget.onHover(false),
@@ -53,13 +56,14 @@ class _ModelCardState extends State<ModelCard> {
             borderRadius: BorderRadius.circular(20),
             gradient: LinearGradient(
               begin:
-                  widget.isHovering ? Alignment.centerLeft : Alignment.topLeft,
+                  widget.isHovering ? Alignment.centerRight : Alignment.topLeft,
               end: widget.isHovering
-                  ? Alignment.centerRight
+                  ? Alignment.centerLeft
                   : Alignment.bottomRight,
               colors: [
                 widget.primaryColor.withOpacity(widget.isSelected ? 0.7 : 0.4),
-                Colors.white.withOpacity(0),
+                // Colors.white.withOpacity(0.1),
+                Colors.black.withOpacity(0.05),
               ],
             ),
             border: Border.all(

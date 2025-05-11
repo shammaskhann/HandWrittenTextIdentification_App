@@ -1,11 +1,10 @@
 import 'dart:ui';
 
+import 'package:ds_ai_project_ui/core/enums/model_type.dart';
 import 'package:ds_ai_project_ui/screen/components/static_background.dart';
 import 'package:ds_ai_project_ui/screen/info/widgets/model_card.dart';
 import 'package:ds_ai_project_ui/screen/scripts/scripts_screen.dart';
 import 'package:flutter/material.dart';
-
-enum ModelType { CNN, ML, Transformer }
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key});
@@ -139,7 +138,10 @@ class _InfoScreenState extends State<InfoScreen> {
             onTap: () async {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ScriptsScreen()),
+                MaterialPageRoute(
+                    builder: (context) => ScriptsScreen(
+                          modelType: selectedModel!,
+                        )),
               );
             },
             child: AnimatedContainer(

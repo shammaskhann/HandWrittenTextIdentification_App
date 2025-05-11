@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   http: ^1.4.0
   file_picker: ^10.1.7
+  get: ^4.7.2
 
 dev_dependencies:
   flutter_test:
