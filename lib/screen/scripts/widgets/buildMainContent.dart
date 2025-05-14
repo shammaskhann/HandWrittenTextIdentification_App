@@ -43,13 +43,14 @@ class _BuildMainContentState extends State<BuildMainContent> {
   bool _showWhiteBoard = false;
   late Color selectedColor;
   Uint8List? whiteBoardImageBytes;
-  double strokeWidth = 5;
+  double strokeWidth = 10;
   List<DrawingPoint?> drawingPoints = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    selectedColor = getColorByModelType(widget.modelType);
+    // selectedColor = getColorByModelType(widget.modelType);
+    selectedColor = Colors.black;
   }
 
   final ScriptsController _controller = Get.isRegistered<ScriptsController>()
@@ -172,7 +173,8 @@ class _BuildMainContentState extends State<BuildMainContent> {
                                   margin: const EdgeInsets.all(
                                       2), // Adjust margin to control border thickness
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF26252A),
+                                    // color: const Color(0xFF26252A),
+                                    color: Colors.white,
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                   child: GestureDetector(

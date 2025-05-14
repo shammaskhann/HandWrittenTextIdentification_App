@@ -4,12 +4,14 @@ import 'package:ds_ai_project_ui/core/enums/model_type.dart';
 import 'package:ds_ai_project_ui/core/theme/app_theme.dart';
 import 'package:ds_ai_project_ui/screen/components/custom_action_button.dart';
 import 'package:ds_ai_project_ui/screen/components/static_background.dart';
+import 'package:ds_ai_project_ui/screen/scripts/scripts_controller.dart';
 import 'package:ds_ai_project_ui/screen/scripts/widgets/buildMainContent.dart';
 import 'package:ds_ai_project_ui/screen/scripts/widgets/buildQuickGuide.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 class ScriptsScreen extends StatefulWidget {
   final ModelType modelType;
@@ -38,6 +40,7 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 600;
     final isTablet = size.width >= 600 && size.width < 1200;
+    final _controller = Get.put(ScriptsController());
 
     Widget _buildSidebar(bool isMobile, bool isTablet) {
       return Container(
@@ -91,48 +94,50 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
             ),
 
             // Clear all button
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text('Clear all',
-                      style: TextStyle(color: Colors.blueAccent)),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(16.0),
+            //   child: Align(
+            //     alignment: Alignment.centerRight,
+            //     child: TextButton(
+            //       onPressed: () {},
+            //       child: const Text('Clear all',
+            //           style: TextStyle(color: Colors.blueAccent)),
+            //     ),
+            //   ),
+            // ),
             // Recent scripts list
-            Expanded(
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    selected: _selectedScriptIndex == index,
-                    leading: Image.asset(
-                      'assets/images/logo3.png',
-                      height: 20,
-                      width: 20,
-                    ),
-                    selectedTileColor: Colors.white.withOpacity(0.1),
-                    title: Text(
-                      'Script ${index + 1}',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16),
-                    ),
-                    subtitle: Text(
-                      widget.modelType == ModelType.ML
-                          ? 'Character recognition by ML'
-                          : widget.modelType == ModelType.CNN
-                              ? 'Character recognition by CNN'
-                              : 'Word recognition by Transformer',
-                      style: TextStyle(color: Colors.white54),
-                    ),
-                    onTap: () => setState(() => _selectedScriptIndex = index),
-                  );
-                },
+            Obx(
+              () => Expanded(
+                child: ListView.builder(
+                  itemCount: _controller.scripts.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      selected: _selectedScriptIndex == index,
+                      leading: Image.asset(
+                        'assets/images/logo3.png',
+                        height: 20,
+                        width: 20,
+                      ),
+                      selectedTileColor: Colors.white.withOpacity(0.1),
+                      title: Text(
+                        _controller.scripts[index].content,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16),
+                      ),
+                      subtitle: Text(
+                        widget.modelType == ModelType.ML
+                            ? 'Character recognition by ML'
+                            : widget.modelType == ModelType.CNN
+                                ? 'Character recognition by CNN'
+                                : 'Word recognition by Transformer',
+                        style: TextStyle(color: Colors.white54),
+                      ),
+                      onTap: () => setState(() => _selectedScriptIndex = index),
+                    );
+                  },
+                ),
               ),
             ),
 

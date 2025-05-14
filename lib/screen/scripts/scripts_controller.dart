@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:ds_ai_project_ui/components/recognition_result.dart';
 import 'package:ds_ai_project_ui/core/enums/model_type.dart';
+import 'package:ds_ai_project_ui/screen/models/scripts.model.dart';
 import 'package:ds_ai_project_ui/services/api_service.dart';
 import 'package:ds_ai_project_ui/utils/api_exception.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class ScriptsController extends GetxController {
   RxBool isProcessing = false.obs;
   RecognitionResult? recognitionResult;
   ApiService _apiService = ApiService();
-
+  RxList<ScriptModel> scripts = <ScriptModel>[].obs;
   void disposeAll() {
     isProcessing.value = false;
     recognitionResult = null;
@@ -39,6 +40,9 @@ class ScriptsController extends GetxController {
       log('Recognition Result: ${result}');
       log('Model Used: ${result.modelUsed}');
       recognitionResult = result;
+      scripts.add(
+        ScriptModel(content: result.prediction, modelType: modelTypee),
+      );
       isProcessing.value = false;
     } on ApiException catch (e) {
       log('API Error: ${e.message}');
