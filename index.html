@@ -1,33 +1,11 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctl
-    Fore more details:* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-  -->
   <base href="/character_recog_ai/">
-  
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A Selft taught flutter developer, technical writer and open source contributor.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="folio">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png" />
-
-  <title>Shammas Khan</title>
-  <link rel="manifest" href="manifest.json">
-
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>ScriptSense - Loading</title>
   <style>
     @font-face {
       font-family: 'Manrope';
@@ -197,11 +175,10 @@
       display: none;
     }
   </style>
-
 </head>
-
 <body>
-  <div id="load">
+  <!-- Loading Screen (will be hidden when Flutter loads) -->
+  <div id="loading-screen">
     <div class="gradient-ball pink-ball"></div>
     <div class="gradient-ball blue-ball"></div>
     <div class="gradient-ball yellow-ball"></div>
@@ -212,26 +189,28 @@
       <div class="progress-container">
         <div class="progress-bar"></div>
       </div>
+    </div>
   </div>
 
-  </div>
-  
-  <!-- This script installs service_worker.js to provide PWA functionality to
-       application. For more information, see:
-       https://developers.google.com/web/fundamentals/primers/service-workers -->
+  <!-- Flutter App Container -->
+  <div id="flutter-app"></div>
+
+  <script src="flutter.js" defer></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('flutter-first-frame', function () {
-        navigator.serviceWorker.register('flutter_service_worker.js');
-           // Remove the loading screen manually
-    const loader = document.getElementById('load');
-    if (loader) {
-      loader.remove(); // or: loader.style.display = 'none';
-    }
+    window.addEventListener('load', function(ev) {
+      // Set up Flutter
+      _flutter.loader.load({
+        serviceWorker: {
+          serviceWorkerVersion: '{{flutter_service_worker_version}}'
+        }
+      }).then(function(engineInitializer) {
+        return engineInitializer.initializeEngine();
+      }).then(function(appRunner) {
+        // When Flutter is ready, hide loading screen and show app
+        document.body.classList.add('loaded');
+        return appRunner.runApp();
       });
-    }
+    });
   </script>
-  <script src="main.dart.js" type="application/javascript"></script>
 </body>
-
 </html>
