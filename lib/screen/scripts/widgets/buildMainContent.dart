@@ -33,24 +33,23 @@ class BuildMainContent extends StatefulWidget {
 
 class _BuildMainContentState extends State<BuildMainContent> {
   PlatformFile? _selectedFile;
-  bool _hasImage = false;
-  Uint8List? pickedFileBytes;
+  // bool _controller.hasImage = false;
+  // Uint8List? _controller.pickedFileBytes;
   final Color cardBackgroundClr = const Color(0xFF1C1C20);
   final Color buttonBackgroundClr = const Color(0xFF26262A);
   final Color buttonTextClr = Colors.white.withOpacity(0.4);
   final GlobalKey _whiteboardKey = GlobalKey();
 
-  bool _showWhiteBoard = false;
-  late Color selectedColor;
+  // bool _controller.showWhiteBoard = false;
+  Color selectedColor = Colors.black;
   Uint8List? whiteBoardImageBytes;
-  double strokeWidth = 10;
-  List<DrawingPoint?> drawingPoints = [];
+  double strokeWidth = 12;
+  // List<DrawingPoint?> _controller.drawingPoints = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     // selectedColor = getColorByModelType(widget.modelType);
-    selectedColor = Colors.black;
   }
 
   final ScriptsController _controller = Get.isRegistered<ScriptsController>()
@@ -60,18 +59,18 @@ class _BuildMainContentState extends State<BuildMainContent> {
   void clearAll() {
     _controller.disposeAll();
     setState(() {
-      _hasImage = false;
-      _showWhiteBoard = false;
-      drawingPoints.clear();
-      pickedFileBytes = null;
+      _controller.hasImage = false;
+      _controller.showWhiteBoard = false;
+      _controller.drawingPoints.clear();
+      _controller.pickedFileBytes = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    log("Has Image: $_hasImage");
-    log("PickedFileBytes: ${pickedFileBytes?.length}");
-    log("Show WhiteBoard: $_showWhiteBoard");
+    log("Has Image: $_controller.hasImage");
+    log("_controller.pickedFileBytes: ${_controller.pickedFileBytes?.length}");
+    log("Show WhiteBoard: $_controller.showWhiteBoard");
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: widget.isMobile ? 16 : 32,
@@ -115,7 +114,7 @@ class _BuildMainContentState extends State<BuildMainContent> {
 
           // Description
           // Image preview or description
-          if (_showWhiteBoard)
+          if (_controller.showWhiteBoard)
             SizedBox(
               child: Row(
                 mainAxisSize:
@@ -180,7 +179,7 @@ class _BuildMainContentState extends State<BuildMainContent> {
                                   child: GestureDetector(
                                     onPanStart: (details) {
                                       setState(() {
-                                        drawingPoints.add(
+                                        _controller.drawingPoints.add(
                                           DrawingPoint(
                                             details.localPosition,
                                             Paint()
@@ -194,7 +193,7 @@ class _BuildMainContentState extends State<BuildMainContent> {
                                     },
                                     onPanUpdate: (details) {
                                       setState(() {
-                                        drawingPoints.add(
+                                        _controller.drawingPoints.add(
                                           DrawingPoint(
                                             details.localPosition,
                                             Paint()
@@ -208,11 +207,12 @@ class _BuildMainContentState extends State<BuildMainContent> {
                                     },
                                     onPanEnd: (details) {
                                       setState(() {
-                                        drawingPoints.add(null);
+                                        _controller.drawingPoints.add(null);
                                       });
                                     },
                                     child: CustomPaint(
-                                      painter: DrawingPainter(drawingPoints),
+                                      painter: DrawingPainter(
+                                          _controller.drawingPoints),
                                       child: Container(
                                         height: double.infinity,
                                         width: double.infinity,
@@ -233,11 +233,12 @@ class _BuildMainContentState extends State<BuildMainContent> {
                         icon: Icons.near_me,
                         iconAtEnd: true,
                         onTap: () async {
-                          pickedFileBytes = await _captureWhiteboard();
-                          _hasImage = true;
+                          _controller.pickedFileBytes =
+                              await _captureWhiteboard();
+                          _controller.hasImage = true;
 
                           setState(() {
-                            _showWhiteBoard = false;
+                            _controller.showWhiteBoard = false;
                           });
                         },
                       ),
@@ -246,10 +247,10 @@ class _BuildMainContentState extends State<BuildMainContent> {
                 ],
               ),
             )
-          else if (_hasImage &&
+          else if (_controller.hasImage &&
               // _selectedFile != null &&
-              pickedFileBytes != null &&
-              !_showWhiteBoard)
+              _controller.pickedFileBytes != null &&
+              !_controller.showWhiteBoard)
             Stack(
               alignment: Alignment.topRight,
               children: [
@@ -260,7 +261,8 @@ class _BuildMainContentState extends State<BuildMainContent> {
                     color: Colors.black.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Image.memory(pickedFileBytes!, fit: BoxFit.scaleDown),
+                  child: Image.memory(_controller.pickedFileBytes!,
+                      fit: BoxFit.scaleDown),
                 ),
                 IconButton(
                   icon: Container(
@@ -290,7 +292,7 @@ class _BuildMainContentState extends State<BuildMainContent> {
 
           // Action buttons
           // Action buttons - conditionally shown
-          if (!_hasImage) ...[
+          if (!_controller.hasImage) ...[
             if (widget.isMobile) ...[
               CustomActionButton(
                 icon: Icons.upload_file,
@@ -303,7 +305,7 @@ class _BuildMainContentState extends State<BuildMainContent> {
                 label: 'Scribe',
                 onTap: () {
                   setState(() {
-                    _showWhiteBoard = true;
+                    _controller.showWhiteBoard = true;
                   });
                 },
               ),
@@ -321,10 +323,10 @@ class _BuildMainContentState extends State<BuildMainContent> {
                     icon: Icons.draw,
                     label: 'Scribe',
                     onTap: () async {
-                      pickedFileBytes = await _captureWhiteboard();
-                      _hasImage = true;
+                      //_controller.pickedFileBytes = await _captureWhiteboard();
+                      _controller.hasImage = true;
                       setState(() {
-                        _showWhiteBoard = true;
+                        _controller.showWhiteBoard = true;
                       });
                     },
                   ),
@@ -344,8 +346,8 @@ class _BuildMainContentState extends State<BuildMainContent> {
                       icon: Icons.search,
                       label: 'Identify Text',
                       onTap: () {
-                        _controller.recognizeText(
-                            pickedFileBytes!, widget.modelType, context);
+                        _controller.recognizeText(_controller.pickedFileBytes!,
+                            widget.modelType, context);
                       },
                     ),
             ),
@@ -400,7 +402,7 @@ class _BuildMainContentState extends State<BuildMainContent> {
   }
 
   Future<void> _pickImage() async {
-    _showWhiteBoard = false;
+    _controller.showWhiteBoard = false;
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.image,
@@ -414,8 +416,8 @@ class _BuildMainContentState extends State<BuildMainContent> {
             file.extension?.toLowerCase() == 'png') {
           setState(() {
             _selectedFile = file;
-            _hasImage = true;
-            pickedFileBytes = file.bytes;
+            _controller.hasImage = true;
+            _controller.pickedFileBytes = file.bytes;
           });
         } else {
           _showErrorDialog('Please select a valid image file (JPG/JPEG/PNG)');

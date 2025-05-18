@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   static const String _baseUrl =
-      'http://10.133.134.168:5000'; // Replace with your actual API URL
+      'http://192.168.18.137:5000'; // Replace with your actual API URL
 
   Future<bool> _pingServer() async {
     //   try {

@@ -1,10 +1,12 @@
 import 'package:ds_ai_project_ui/core/enums/model_type.dart';
 
 class ScriptModel {
+  final int id;
   final String content;
-  final ModelType modelType;
+  ModelType? modelType;
 
-  const ScriptModel({
+  ScriptModel({
+    required this.id,
     required this.content,
     required this.modelType,
   });
