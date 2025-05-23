@@ -99,7 +99,7 @@ class _BuildMainContentState extends State<BuildMainContent> {
                   ? 'Character recognition by ML'
                   : widget.modelType == ModelType.CNN
                       ? 'Character recognition by CNN'
-                      : 'Word recognition by Transformer',
+                      : 'Word recognition by Neural Network',
               style: TextStyle(
                 fontSize: widget.isMobile ? 24 : 51,
                 color: Colors
@@ -176,34 +176,60 @@ class _BuildMainContentState extends State<BuildMainContent> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(15),
                                   ),
+                                  // ...existing code...
                                   child: GestureDetector(
+                                    // Only allow drawing if the pointer is inside the whiteboard area
                                     onPanStart: (details) {
-                                      setState(() {
-                                        _controller.drawingPoints.add(
-                                          DrawingPoint(
-                                            details.localPosition,
-                                            Paint()
-                                              ..color = selectedColor
-                                              ..isAntiAlias = true
-                                              ..strokeWidth = strokeWidth
-                                              ..strokeCap = StrokeCap.round,
-                                          ),
-                                        );
-                                      });
+                                      final box = _whiteboardKey.currentContext
+                                          ?.findRenderObject() as RenderBox?;
+                                      if (box != null) {
+                                        final local = box.globalToLocal(
+                                            details.globalPosition);
+                                        final size = box.size;
+                                        if (local.dx >= 0 &&
+                                            local.dy >= 0 &&
+                                            local.dx <= size.width &&
+                                            local.dy <= size.height) {
+                                          setState(() {
+                                            _controller.drawingPoints.add(
+                                              DrawingPoint(
+                                                local,
+                                                Paint()
+                                                  ..color = selectedColor
+                                                  ..isAntiAlias = true
+                                                  ..strokeWidth = strokeWidth
+                                                  ..strokeCap = StrokeCap.round,
+                                              ),
+                                            );
+                                          });
+                                        }
+                                      }
                                     },
                                     onPanUpdate: (details) {
-                                      setState(() {
-                                        _controller.drawingPoints.add(
-                                          DrawingPoint(
-                                            details.localPosition,
-                                            Paint()
-                                              ..color = selectedColor
-                                              ..isAntiAlias = true
-                                              ..strokeWidth = strokeWidth
-                                              ..strokeCap = StrokeCap.round,
-                                          ),
-                                        );
-                                      });
+                                      final box = _whiteboardKey.currentContext
+                                          ?.findRenderObject() as RenderBox?;
+                                      if (box != null) {
+                                        final local = box.globalToLocal(
+                                            details.globalPosition);
+                                        final size = box.size;
+                                        if (local.dx >= 0 &&
+                                            local.dy >= 0 &&
+                                            local.dx <= size.width &&
+                                            local.dy <= size.height) {
+                                          setState(() {
+                                            _controller.drawingPoints.add(
+                                              DrawingPoint(
+                                                local,
+                                                Paint()
+                                                  ..color = selectedColor
+                                                  ..isAntiAlias = true
+                                                  ..strokeWidth = strokeWidth
+                                                  ..strokeCap = StrokeCap.round,
+                                              ),
+                                            );
+                                          });
+                                        }
+                                      }
                                     },
                                     onPanEnd: (details) {
                                       setState(() {
@@ -214,11 +240,66 @@ class _BuildMainContentState extends State<BuildMainContent> {
                                       painter: DrawingPainter(
                                           _controller.drawingPoints),
                                       child: Container(
-                                        height: double.infinity,
-                                        width: double.infinity,
+                                        width: widget.isMobile
+                                            ? widget.size.width * 0.8
+                                            : widget.size.width * 0.4,
+                                        height: widget.isMobile
+                                            ? widget.size.width * 0.8
+                                            : widget.size.height * 0.4,
+                                        margin: const EdgeInsets.all(2),
                                       ),
                                     ),
                                   ),
+// ...existing code...
+                                  // child: GestureDetector(
+                                  //   onPanStart: (details) {
+                                  //     setState(() {
+                                  //       _controller.drawingPoints.add(
+                                  //         DrawingPoint(
+                                  //           details.localPosition,
+                                  //           Paint()
+                                  //             ..color = selectedColor
+                                  //             ..isAntiAlias = true
+                                  //             ..strokeWidth = strokeWidth
+                                  //             ..strokeCap = StrokeCap.round,
+                                  //         ),
+                                  //       );
+                                  //     });
+                                  //   },
+                                  //   onPanUpdate: (details) {
+                                  //     setState(() {
+                                  //       _controller.drawingPoints.add(
+                                  //         DrawingPoint(
+                                  //           details.localPosition,
+                                  //           Paint()
+                                  //             ..color = selectedColor
+                                  //             ..isAntiAlias = true
+                                  //             ..strokeWidth = strokeWidth
+                                  //             ..strokeCap = StrokeCap.round,
+                                  //         ),
+                                  //       );
+                                  //     });
+                                  //   },
+                                  //   onPanEnd: (details) {
+                                  //     setState(() {
+                                  //       _controller.drawingPoints.add(null);
+                                  //     });
+                                  //   },
+                                  //   child: CustomPaint(
+                                  //     painter: DrawingPainter(
+                                  //         _controller.drawingPoints),
+                                  //     child: Container(
+                                  //       width: widget.isMobile
+                                  //           ? widget.size.width * 0.8
+                                  //           : widget.size.width * 0.4,
+                                  //       height: widget.isMobile
+                                  //           ? widget.size.width * 0.8
+                                  //           : widget.size.height * 0.4,
+                                  //       margin: const EdgeInsets.all(
+                                  //           2), // Adjust margin to control border thickness
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ),
                               ),
                             ),

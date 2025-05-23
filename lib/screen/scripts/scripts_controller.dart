@@ -87,7 +87,7 @@ class ScriptsController extends GetxController {
           ? 'ml'
           : modelTypee == ModelType.CNN
               ? 'cnn'
-              : 'transformer';
+              : 'word';
 
       final result = await _apiService.recognizeHandwriting(
         imageBytes: imageBytes,

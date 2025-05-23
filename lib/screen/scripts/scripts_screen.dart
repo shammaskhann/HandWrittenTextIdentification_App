@@ -141,7 +141,7 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
                             : _controller.scripts[index].modelType ==
                                     ModelType.CNN
                                 ? 'Character recognition by CNN'
-                                : 'Word recognition by Transformer',
+                                : 'Word recognition by Neural Network',
                         style: const TextStyle(color: Colors.white54),
                       ),
                       onTap: () => setState(() => _selectedScriptIndex = index),

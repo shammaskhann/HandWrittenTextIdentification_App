@@ -132,7 +132,7 @@ class _NewScriptButtonState extends State<NewScriptButton>
                               _buildAnimatedOption(
                                 index: 2,
                                 color: widget.lightYellowClr,
-                                text: "Word Recognition by Transformer",
+                                text: "Word Recognition by Neural Network",
                                 onTap: widget.onTransformerTap,
                               ),
                             ],
