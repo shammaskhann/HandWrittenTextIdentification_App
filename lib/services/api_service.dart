@@ -7,8 +7,12 @@ import 'package:ds_ai_project_ui/utils/api_exception.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
+<<<<<<< HEAD
   static const String _baseUrl =
       'http://192.168.18.130:5000'; // Replace with your actual API URL
+=======
+  static const String _baseUrl = 'http://192.168.18.137:8000';
+>>>>>>> 692c49bf3f72300700b251d29b733188aa3023b3
 
   Future<bool> _pingServer() async {
     //   try {
