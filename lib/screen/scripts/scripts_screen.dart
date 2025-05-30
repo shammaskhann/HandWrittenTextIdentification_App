@@ -44,7 +44,6 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _controller.setScript(widget.modelType);
   }
@@ -141,7 +140,7 @@ class _ScriptsScreenState extends State<ScriptsScreen> {
                             : _controller.scripts[index].modelType ==
                                     ModelType.CNN
                                 ? 'Character recognition by CNN'
-                                : 'Word recognition by Transformer',
+                                : 'Word Recognition by OCR Model',
                         style: const TextStyle(color: Colors.white54),
                       ),
                       onTap: () => setState(() => _selectedScriptIndex = index),

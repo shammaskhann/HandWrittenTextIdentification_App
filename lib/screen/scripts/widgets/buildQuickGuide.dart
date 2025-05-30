@@ -130,7 +130,7 @@ Widget buildQuickGuide(
                   text: ', or ',
                 ),
                 TextSpan(
-                  text: 'Word Recognition using Transformers',
+                  text: 'Word Recognition using OCR Models',
                   style: TextStyle(
                       color: lightYellowClr, fontWeight: FontWeight.w600),
                 ),

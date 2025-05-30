@@ -43,7 +43,7 @@ class _BuildMainContentState extends State<BuildMainContent> {
   // bool _controller.showWhiteBoard = false;
   Color selectedColor = Colors.black;
   Uint8List? whiteBoardImageBytes;
-  double strokeWidth = 12;
+  double strokeWidth = 18.0;
   // List<DrawingPoint?> _controller.drawingPoints = [];
   @override
   void initState() {
@@ -99,7 +99,7 @@ class _BuildMainContentState extends State<BuildMainContent> {
                   ? 'Character recognition by ML'
                   : widget.modelType == ModelType.CNN
                       ? 'Character recognition by CNN'
-                      : 'Word recognition by Transformer',
+                      : 'Word Recognition by OCR Model',
               style: TextStyle(
                 fontSize: widget.isMobile ? 24 : 51,
                 color: Colors

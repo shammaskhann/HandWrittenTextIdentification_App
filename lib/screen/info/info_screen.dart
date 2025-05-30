@@ -264,7 +264,7 @@ class _InfoScreenState extends State<InfoScreen> {
         ),
         const SizedBox(height: 16),
         ModelCard(
-          title: 'Word Recognition Using Transformer',
+          title: 'Word Recognition using OCR Model',
           description: 'Go beyond character-level recognition. '
               'Detect and classify complete handwritten words '
               'for smarter, context-aware text interpretation.',
@@ -315,7 +315,7 @@ class _InfoScreenState extends State<InfoScreen> {
         ),
         const SizedBox(height: 16),
         ModelCard(
-          title: 'Word Recognition Using Transformer',
+          title: 'Word Recognition using OCR Model',
           description: 'Go beyond character-level recognition. '
               'Detect and classify complete handwritten words '
               'for smarter, context-aware text interpretation.',
@@ -361,7 +361,7 @@ class _InfoScreenState extends State<InfoScreen> {
         ),
         const SizedBox(width: 32),
         ModelCard(
-          title: 'Word Recognition Using Transformer',
+          title: 'Word Recognition using OCR Model',
           description: 'Go beyond character-level recognition. '
               'Detect and classify complete handwritten words '
               'for smarter, context-aware text interpretation.',
